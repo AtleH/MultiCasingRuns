@@ -28,19 +28,27 @@ const wellbores = [
 const casingRunStates = [
   {
     id: "123",
+    wellUid: "95992c20-f691-40d9-86e1-4f3e5ce823b4",
+    wellboreUid: "b6045ffb-68f9-4e97-b4e2-f092fc7263a8",
     from: Date("2022-02-08T14:03:23Z"),
     to: 4503,
     states: ["Running"]
   },
   {
     id: "124",
+    wellUid: "66e8d42f-0cda-4701-bff8-7b0bb3ba3d1f",
+    wellboreUid: "1b52f37c-827a-418e-bb7d-d52a9f0a8a3b",
     from: Date("2022-02-09T08:03:23Z"),
     to: 5400,
     states: ["Scheduled", "Casing data"]
   }
 ];
 
-const DATETIME_FORMAT = "DD.MM.yyyy HH:mm:ss";
+const getCasingRunStates = (wellbore) =>
+  casingRunStates.filter(
+    (w) =>
+      w.wellUid === wellbore.wellUid && w.wellboreUid === wellbore.wellboreUid
+  );
 
 export default function App() {
   return (
@@ -52,15 +60,15 @@ export default function App() {
           <Accordion.Item isExpanded="true">
             <Accordion.Header>
               <Typography>
-                {wellbore.name} / {wellbore.rigName} / {wellbore.oilField}
+                {wellbore.name} / {wellbore.oilField} / {wellbore.rigName}
               </Typography>
             </Accordion.Header>
             <Accordion.Panel>
-              {casingRunStates.map((state) => (
+              {getCasingRunStates(wellbore).map((state) => (
                 <CasingRunContainer key={state.id}>
                   <CasingRunName>
                     <StyledLink>
-                      From {moment(state.from).format(DATETIME_FORMAT)} to{" "}
+                      From {moment(state.from).format("DD.MM.yyyy HH:mm:ss")} to{" "}
                       {state.to}m
                     </StyledLink>
                   </CasingRunName>
