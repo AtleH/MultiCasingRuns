@@ -1,16 +1,46 @@
 import "./styles.css";
 import styled from "styled-components";
-import { Accordion, Typography, Chip, Icon } from "@equinor/eds-core-react";
+import { Accordion, Chip, Icon, Typography } from "@equinor/eds-core-react";
 import { delete_to_trash } from "@equinor/eds-icons";
+import moment from "moment";
 
 Icon.add({ delete_to_trash });
 
-const casingRunStates = [
+const wellbores = [
   {
-    from: Date("2022-02-08T14:03:23Z"),
-    states: ["Running"]
+    name: "NO 33/9-E-4 HT4",
+    wellUid: "66e8d42f-0cda-4701-bff8-7b0bb3ba3d1f",
+    wellboreUid: "1b52f37c-827a-418e-bb7d-d52a9f0a8a3b",
+    rigName: "DEEPSEA ATLANTIC",
+    oilField: "STATFJORD NORD",
+    active: true
+  },
+  {
+    name: "NO 16/2-D-35",
+    wellUid: "95992c20-f691-40d9-86e1-4f3e5ce823b4",
+    wellboreUid: "b6045ffb-68f9-4e97-b4e2-f092fc7263a8",
+    rigName: "JOHAN SVERDRUP DP",
+    oilField: "JOHAN SVERDRUP",
+    active: true
   }
 ];
+
+const casingRunStates = [
+  {
+    id: "123",
+    from: Date("2022-02-08T14:03:23Z"),
+    to: 4503,
+    states: ["Running"]
+  },
+  {
+    id: "124",
+    from: Date("2022-02-09T08:03:23Z"),
+    to: 5400,
+    states: ["Scheduled", "Casing data"]
+  }
+];
+
+const DATETIME_FORMAT = "DD.MM.yyyy HH:mm:ss";
 
 export default function App() {
   return (
@@ -18,35 +48,35 @@ export default function App() {
       <h1>Multiple casing runs</h1>
 
       <Accordion>
-        <Accordion.Item isExpanded="true">
-          <Accordion.Header>
-            NO 30/6-E-4 C - OSEBERG ØST / OSEBERG ØST
-          </Accordion.Header>
-          <Accordion.Panel>
-            <CasingRunContainer key="1">
-              <CasingRunName>
-                <StyledLink>7. feb 08:49 – 4503m</StyledLink>
-              </CasingRunName>
-              <CasingRunActions>
-                <Icon name="delete_to_trash" title="Menu" />
-              </CasingRunActions>
-              <CasingRunStatus>
-                <Chip>Running</Chip>
-              </CasingRunStatus>
-            </CasingRunContainer>
-            <CasingRunContainer key="2">
-              <CasingRunName>
-                <StyledLink>9. feb 14:00 – 4600m</StyledLink>
-              </CasingRunName>
-              <CasingRunActions>
-                <Icon name="delete_to_trash" title="Menu" />
-              </CasingRunActions>
-              <CasingRunStatus>
-                <Chip>Scheduled</Chip>
-              </CasingRunStatus>
-            </CasingRunContainer>
-          </Accordion.Panel>
-        </Accordion.Item>
+        {wellbores.map((wellbore) => (
+          <Accordion.Item isExpanded="true">
+            <Accordion.Header>
+              <Typography>
+                {wellbore.name} / {wellbore.rigName} / {wellbore.oilField}
+              </Typography>
+            </Accordion.Header>
+            <Accordion.Panel>
+              {casingRunStates.map((state) => (
+                <CasingRunContainer key={state.id}>
+                  <CasingRunName>
+                    <StyledLink>
+                      From {moment(state.from).format(DATETIME_FORMAT)} to{" "}
+                      {state.to}m
+                    </StyledLink>
+                  </CasingRunName>
+                  <CasingRunActions>
+                    <Icon name="delete_to_trash" title="Menu" />
+                  </CasingRunActions>
+                  <CasingRunStatus>
+                    {state.states.map((s) => (
+                      <Chip>{s}</Chip>
+                    ))}
+                  </CasingRunStatus>
+                </CasingRunContainer>
+              ))}
+            </Accordion.Panel>
+          </Accordion.Item>
+        ))}
       </Accordion>
     </div>
   );
@@ -54,9 +84,8 @@ export default function App() {
 
 const CasingRunContainer = styled.div`
   display: grid;
-  grid-template-columns: 300px 100px 100px;
-  border-color: red;
-  border-width: 3px;
+  grid-template-columns: 250px 100px 100px;
+  padding: 5px;
 `;
 
 const CasingRunName = styled.div`
